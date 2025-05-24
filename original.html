@@ -1,0 +1,120 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BinCodBot - Активация UC</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0f0f0f;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    .container {
+      background: #1e1e1e;
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: 0 0 20px rgba(0,255,255,0.2);
+      max-width: 400px;
+      width: 90%;
+    }
+    h1 {
+      color: #00ffff;
+      font-size: 1.5rem;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    label {
+      display: block;
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+    input {
+      width: 100%;
+      padding: 0.6rem;
+      margin-top: 0.5rem;
+      border: none;
+      border-radius: 8px;
+      background: #2e2e2e;
+      color: white;
+    }
+    button {
+      margin-top: 2rem;
+      width: 100%;
+      padding: 0.8rem;
+      border: none;
+      border-radius: 8px;
+      background: #00ffff;
+      color: black;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+    button:hover {
+      background: #00cccc;
+    }
+    .status {
+      margin-top: 1rem;
+      text-align: center;
+      font-size: 0.95rem;
+      color: #aaaaaa;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Активация UC PUBG</h1>
+    <label for="pubg_id">Ваш PUBG ID</label>
+    <input type="text" id="pubg_id" placeholder="Введите ID...">
+
+    <label for="uc_code">Код UC</label>
+    <input type="text" id="uc_code" placeholder="Введите код...">
+
+    <button onclick="activateCode()">Активировать</button>
+    <div class="status" id="status"></div>
+  </div>
+
+  <script>
+    async function activateCode() {
+      const id = document.getElementById('pubg_id').value.trim();
+      const code = document.getElementById('uc_code').value.trim();
+      const status = document.getElementById('status');
+
+      if (!id || !code) {
+        status.textContent = 'Пожалуйста, заполните все поля.';
+        return;
+      }
+
+      status.textContent = '🔄 Отправка запроса...';
+
+      try {
+        const res = await fetch('https://midasbuyapi.nightstranger.space/api/v1/pubg/activate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Api-Key': 'd831565a07b4e2a08590a648b7c4724b'
+          },
+          body: JSON.stringify({ player_id: id, uc_code: code })
+        });
+
+        const json = await res.json();
+        if (json.success && json.data.status === 'success') {
+          status.textContent = `✅ Успешно: ${json.data.uc_amount} UC для ${json.data.player_name}`;
+        } else {
+          status.textContent = `❌ Ошибка: ${json.message || 'Не удалось активировать код.'}`;
+        }
+      } catch (err) {
+        status.textContent = '🚨 Ошибка запроса. Проверьте соединение.';
+      }
+    }
+  </script>
+</body>
+</html>
